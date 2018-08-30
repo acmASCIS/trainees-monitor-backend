@@ -39,6 +39,7 @@
     "@types/express": "^4.16.0",
     "@types/helmet": "0.0.38",
     "@types/jest": "^23.3.1",
+    "@types/mongoose": "^5.2.9",
     "@types/morgan": "^1.7.35",
     "@types/supertest": "^2.0.5",
     "husky": "^1.0.0-rc.13",
@@ -61,6 +62,7 @@
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "helmet": "^3.13.0",
+    "mongoose": "^5.2.10",
     "morgan": "^1.9.0"
   }
 }
