@@ -1,7 +1,7 @@
 import { Schema, Model, model, Document } from 'mongoose';
 import { UserDTO, Role } from './UserDTO';
 
-type UserType = UserDTO & Document;
+export type UserType = UserDTO & Document;
 
 const userSchema = new Schema(
   {
@@ -9,7 +9,7 @@ const userSchema = new Schema(
     name: String,
     email: String,
     password: String,
-    role: Role,
+    role: Number,
     onlineJudgesHandles: {
       codeforces: String
     }
