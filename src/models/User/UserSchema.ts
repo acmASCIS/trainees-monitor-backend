@@ -1,17 +1,17 @@
 import { Schema, Model, model, Document } from 'mongoose';
-import { UserDTO, Role } from './UserDTO';
+import { UserDTO } from './UserDTO';
 
 export type UserType = UserDTO & Document;
 
 const userSchema = new Schema(
   {
-    handle: String,
-    name: String,
-    email: String,
-    password: String,
-    role: Number,
+    handle: { type: String, required: true, index: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true, index: true },
+    password: { type: String, required: true },
+    role: { type: Number, required: true },
     onlineJudgesHandles: {
-      codeforces: String
+      codeforces: { type: String, required: true }
     }
   },
   { timestamps: true }
