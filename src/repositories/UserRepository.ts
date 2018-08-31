@@ -5,7 +5,8 @@ import { Model } from 'mongoose';
 
 export interface IUserRepository {
   create(user: UserDTO): Promise<UserDTO>;
-  find(id: string): Promise<UserDTO>;
+  findOne(conditions?: object): Promise<UserDTO | null>;
+  findById(id: string): Promise<UserDTO>;
   findAll(): Promise<UserDTO[]>;
   update(user: UserDTO): Promise<UserDTO>;
 }
@@ -19,7 +20,11 @@ export class UserRepository extends BaseRepository<UserType> implements IUserRep
     return await this._model.create(user);
   }
 
-  public find(id: string): Promise<UserDTO> {
+  public async findOne(conditions?: object) {
+    return await this._model.findOne(conditions);
+  }
+
+  public findById(id: string): Promise<UserDTO> {
     throw new Error('Method not implemented.');
   }
 
