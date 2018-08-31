@@ -1,3 +1,4 @@
+import { UserRepository } from './repositories/UserRepository';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import Server from './Server';
@@ -18,4 +19,4 @@ mongoose.connect(
   }
 );
 
-export default server;
+export const app = server.start();

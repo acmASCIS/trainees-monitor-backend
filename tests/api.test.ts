@@ -1,9 +1,9 @@
 import request from 'supertest';
-import server from '../src';
+import { app } from '../src';
 
 describe('GET /', () => {
   it('should return 200 OK', () => {
-    return request(server.app)
+    return request(app)
       .get('/')
       .expect(200);
   });
