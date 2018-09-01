@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import compression from 'compression';
 import helmet from 'helmet';
+import 'express-async-errors';
 
 import controllers from './controllers';
 import { errorHandler } from './utils/middleware/errorHandler';
