@@ -17,8 +17,9 @@ export default class AccountsController implements IController {
   }
 
   /**
-   * POST /register
-   * Creates new user.
+   * @route POST /register
+   * @desc Creates new user.
+   * @access Public
    */
   private async registerUser(req: Request, res: Response, next: NextFunction) {
     // validate register input
@@ -42,14 +43,15 @@ export default class AccountsController implements IController {
     } else if (await this.userRepository.findOne({ handle: user.handle })) {
       next(new ApiError('Invalid Input', 400, { handle: 'Handle already exists' }));
     } else {
-      const createdUser: UserDTO = await this.userRepository.create(user);
-      res.status(201).json(_.pick(createdUser, ['_id', 'handle', 'name']));
+      await this.userRepository.create(user);
+      res.status(201).json({ success: true });
     }
   }
 
   /**
-   * POST /login
-   * Sign in using email and password.
+   * @route POST /login
+   * @desc Sign in using email and password.
+   * @access Public
    */
   private async login(req: Request, res: Response, next: NextFunction) {
     // validate login input
@@ -77,8 +79,9 @@ export default class AccountsController implements IController {
       return;
     }
 
-    // TODO: return token
-    // return token and user info
-    res.json(_.pick(user, ['_id', 'handle', 'name']));
+    // return jwt token
+    const token = user.generateAuthToken();
+    res.setHeader('Authorization', token);
+    res.json({ success: true });
   }
 }

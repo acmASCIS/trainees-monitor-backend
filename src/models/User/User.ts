@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { OnlineJudgesHandles, Role } from './UserDTO';
 import { hash, compare } from '../../utils/hash';
 
@@ -18,5 +19,12 @@ export class User {
 
   public async validatePassword(plainPassword: string) {
     return await compare(plainPassword, this.password);
+  }
+
+  public generateAuthToken(): string {
+    return jwt.sign(
+      { _id: this._id, handle: this.handle, name: this.name, role: this.role },
+      process.env.JWT_SECRET as string
+    );
   }
 }
