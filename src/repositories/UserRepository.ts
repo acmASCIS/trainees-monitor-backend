@@ -1,38 +1,39 @@
-import { BaseRepository } from './BaseRepository';
-import { UserModel, UserType } from './../models/User/UserSchema';
-import { UserDTO } from '../models/User/UserDTO';
 import { Model } from 'mongoose';
 
-export interface IUserRepository {
-  create(user: UserDTO): Promise<UserDTO>;
-  findOne(conditions?: object): Promise<UserDTO | null>;
-  findById(id: string): Promise<UserDTO>;
-  findAll(): Promise<UserDTO[]>;
-  update(user: UserDTO): Promise<UserDTO>;
+import { BaseRepository } from './BaseRepository';
+import { UserModel, UserType } from './../models/User/UserSchema';
+import { User } from '../models/User/User';
+
+export interface IUserRepository extends BaseRepository<User, UserType> {
+  findByEmail(email: string): Promise<User | undefined>;
+  findByHandle(handle: string): Promise<User | undefined>;
 }
 
-export class UserRepository extends BaseRepository<UserType> implements IUserRepository {
+export class UserRepository extends BaseRepository<User, UserType> implements IUserRepository {
   constructor(model: Model<UserType> = UserModel) {
     super(model);
   }
 
-  public async create(user: UserDTO): Promise<UserDTO> {
-    return await this._model.create(user);
+  public async findByEmail(email: string): Promise<User | undefined> {
+    const model = await this._model.find({ email: new RegExp(`^${email}$`, 'i') }).limit(1);
+
+    if (!model.length) {
+      return undefined;
+    }
+    return this.toEntity(model[0]);
   }
 
-  public async findOne(conditions?: object) {
-    return await this._model.findOne(conditions);
+  public async findByHandle(handle: string): Promise<User | undefined> {
+    const model = await this._model.find({ handle: new RegExp(`^${handle}$`, 'i') }).limit(1);
+
+    if (!model.length) {
+      return undefined;
+    }
+    return this.toEntity(model[0]);
   }
 
-  public findById(id: string): Promise<UserDTO> {
-    throw new Error('Method not implemented.');
-  }
-
-  public findAll(): Promise<UserDTO[]> {
-    throw new Error('Method not implemented.');
-  }
-
-  public update(user: UserDTO): Promise<UserDTO> {
-    throw new Error('Method not implemented.');
+  protected toEntity(item: UserType): User {
+    const { handle, name, email, password, role, onlineJudgesHandles, _id } = item;
+    return new User(handle, name, email, password, role, onlineJudgesHandles, _id);
   }
 }

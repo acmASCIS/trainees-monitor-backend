@@ -5,9 +5,9 @@ export type UserType = UserDTO & Document;
 
 const userSchema = new Schema(
   {
-    handle: { type: String, required: true, index: true },
+    handle: { type: String, required: true, unique: true },
     name: { type: String, required: true },
-    email: { type: String, required: true, index: true },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: Number, required: true },
     onlineJudgesHandles: {
@@ -16,5 +16,7 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
+
+userSchema.index({ handle: 'text', email: 'text' });
 
 export const UserModel: Model<UserType> = model<UserType>('User', userSchema);

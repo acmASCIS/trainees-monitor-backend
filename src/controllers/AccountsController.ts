@@ -1,9 +1,8 @@
-import { Application, Request, Response, NextFunction } from 'express';
+import { Application, Request, Response } from 'express';
 import _ from 'lodash';
 
 import { IController } from './IController';
 import { User } from '../models/User/User';
-import { UserDTO } from './../models/User/UserDTO';
 import { IUserRepository, UserRepository } from './../repositories/UserRepository';
 import { validateRegisterInput, validateLoginInput } from '../utils/validation';
 import { ApiError } from './../utils/ApiError';
@@ -36,10 +35,9 @@ export default class AccountsController implements IController {
     user.password = await user.hashPassword();
 
     // Checking duplicate user email and handle
-    // FIXME: use regex to find
-    if (await this.userRepository.findOne({ email: user.email })) {
+    if (await this.userRepository.findByEmail(email)) {
       throw new ApiError('Invalid Input', 400, { email: 'Email already exists' });
-    } else if (await this.userRepository.findOne({ handle: user.handle })) {
+    } else if (await this.userRepository.findByHandle(handle)) {
       throw new ApiError('Invalid Input', 400, { handle: 'Handle already exists' });
     } else {
       await this.userRepository.create(user);
@@ -60,17 +58,12 @@ export default class AccountsController implements IController {
     }
 
     // check if user exists
-    // TODO: abstract the user search logic in UserService
-    const foundUser: UserDTO | null = await this.userRepository.findOne({
-      email: new RegExp(`^${req.body.email}$`, 'i')
-    });
-    if (!foundUser) {
+    const user: User | undefined = await this.userRepository.findByEmail(req.body.email);
+    if (!user) {
       throw new ApiError('Invalid email or password', 404);
     }
 
     // validate password
-    const { handle, name, email, password, role, onlineJudgesHandles, _id } = foundUser;
-    const user: User = new User(handle, name, email, password, role, onlineJudgesHandles, _id);
     if ((await user.validatePassword(req.body.password)) === false) {
       throw new ApiError('Invalid email or password', 404);
     }
