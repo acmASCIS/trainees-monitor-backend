@@ -1,6 +1,11 @@
 import { ApiError } from './../ApiError';
 import { Request, Response, NextFunction } from 'express';
 
+/**
+ * Error Handler Middleware
+ *
+ * @param {ApiError} error
+ */
 export function errorHandler(error: ApiError, req: Request, res: Response, next: NextFunction) {
   // TODO: log using logger
   console.log(error);

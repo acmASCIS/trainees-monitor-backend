@@ -1,5 +1,4 @@
 import { Application, Request, Response } from 'express';
-import _ from 'lodash';
 
 import { IController } from './IController';
 import { User } from '../models/User/User';
