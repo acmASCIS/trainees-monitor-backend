@@ -10,6 +10,7 @@
     "src/**/*"
   ],
   "files": [
-    "src/types/auth.d.ts"
+    "src/types/auth.d.ts",
+    "src/types/CodeforcesService.d.ts"
   ]
 }

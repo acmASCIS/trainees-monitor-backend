@@ -9,12 +9,28 @@ export class CodeforcesService {
     this.baseUrl = 'http://codeforces.com/api';
   }
 
-  public async getUser(handle: string): Promise<any> {
+  /**
+   * Get User Info from user.info CF API Method
+   *
+   * @param {string} handle
+   * @returns {(CFUser | undefined)} The Codeforces User info or undefined if not found
+   */
+  public async getUser(handle: string): Promise<CFUser | undefined> {
     const url = this.generateMethodUrl('user.info', { handles: handle });
-    const users = await axios.get(url);
-    return users.data.result[0];
+    try {
+      const users = await axios.get(url);
+      return users.data.result[0];
+    } catch (error) {
+      return undefined;
+    }
   }
 
+  /**
+   * Generate the URL required for a specific method
+   *
+   * @param {string} methodName - The name of the method in CF API
+   * @param {object} params - The parameters object
+   */
   private generateMethodUrl(methodName: string, params: object): string {
     const randomStart = this.generateRandomStart();
     const time = Math.round(Date.now() / 1000);
@@ -25,18 +41,34 @@ export class CodeforcesService {
     }&time=${time}&apiSig=${randomStart}${apiSig}`;
   }
 
+  /**
+   * Generate random string of size 6 as the apiSig start
+   */
   private generateRandomStart(): string {
     return Math.random()
       .toString(36)
       .substring(2, 8);
   }
 
+  /**
+   * Generate the apiSig required by the private CF API methods.
+   * Uses CryptoJS to hash the input with a SHA512 algorithm.
+   *
+   * @param {string} randomStart - A random string of size 6
+   * @param {string} methodName - The name of the method in CF API
+   * @param {object} params - The parameters object
+   */
   private generateApiSig(randomStart: string, methodName: string, params: object): string {
     return CryptoJS.SHA512(
       `${randomStart}/${methodName}?${this.toParamsString(params)}#${this.secret}`
     ).toString();
   }
 
+  /**
+   * Convert the parameters object to parameter string
+   *
+   * @param {object} params - The parameters object
+   */
   private toParamsString(params: any): string {
     return Object.keys(params)
       .map(key => `${key}=${params[key]}`)
