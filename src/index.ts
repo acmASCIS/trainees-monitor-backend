@@ -1,9 +1,10 @@
-import { UserRepository } from './repositories/UserRepository';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import Server from './Server';
 
+// loading env file before importing any module
 dotenv.load();
+
+import Server from './Server';
 
 const server: Server = new Server();
 

@@ -6,9 +6,14 @@ import { IController } from './IController';
 import { IUserRepository, UserRepository } from '../repositories/UserRepository';
 import { authorize } from '../utils/middleware/authHandler';
 import { Role } from '../models/User/UserDTO';
+import { CodeforcesService } from './../services/onlinejudges/CodeforcesService';
 
 export default class ProfilesController implements IController {
   private userRepository: IUserRepository = new UserRepository();
+  private cfService: CodeforcesService = new CodeforcesService(
+    process.env.CF_KEY as string,
+    process.env.CF_SECRET as string
+  );
 
   public register(app: Application): void {
     const router = Router();
@@ -30,8 +35,22 @@ export default class ProfilesController implements IController {
       throw new ApiError('User not found.', 404);
     }
 
-    // TODO: return all the needed About Section details
+    const userProfile: any = _.pick(user, [
+      'handle',
+      'name',
+      'email',
+      'onlineJudgesHandles',
+      'role'
+    ]);
 
-    res.json(_.pick(user, ['handle', 'name', 'email', 'onlineJudgesHandles', 'role']));
+    // Loading Codeforces User info
+    const cfInfo = await this.cfService.getUser(user.onlineJudgesHandles.codeforces);
+    if (cfInfo) {
+      userProfile.rank = cfInfo.rank;
+      userProfile.rating = cfInfo.rating;
+      userProfile.lastOnlineTimeSeconds = cfInfo.lastOnlineTimeSeconds;
+    }
+
+    res.json(userProfile);
   }
 }
