@@ -1,18 +1,21 @@
-import Validator from 'validator';
+import joi from 'joi';
+import { toErrorBody } from './toErrorBody';
 
 export function validateLoginInput(input: any) {
-  const { email = '', password = '' } = input;
-  const errors: any = {};
+  const loginInputSchema = {
+    email: joi.string().email(),
+    password: joi
+      .string()
+      .min(6)
+      .max(30)
+  };
 
-  if (!Validator.isEmail(email)) {
-    errors.email = 'Email is invalid';
-  }
-
-  if (!Validator.isLength(password, { min: 6, max: 30 })) {
-    errors.password = 'Password must be at least 6 characters';
-  }
+  const { error } = joi.validate(input, loginInputSchema, {
+    abortEarly: false,
+    presence: 'required'
+  });
 
   return {
-    errors: Object.keys(errors).length ? errors : undefined
+    errors: error ? toErrorBody(error) : undefined
   };
 }
