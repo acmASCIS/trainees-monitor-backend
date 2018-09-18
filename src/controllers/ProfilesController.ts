@@ -17,7 +17,7 @@ export default class ProfilesController implements IController {
 
   public register(app: Application): void {
     const router = Router();
-    router.get('/:handle', authorize(Role.Mentor), this.getProfile.bind(this));
+    router.get('/:handle', authorize(Role.Trainee), this.getProfile.bind(this));
 
     // attaching the router to the endpoint.
     app.use('/profile', router);
