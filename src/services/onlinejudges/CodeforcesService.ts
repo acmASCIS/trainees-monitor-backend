@@ -13,15 +13,47 @@ export class CodeforcesService {
    * Get User Info from user.info CF API Method
    *
    * @param {string} handle
-   * @returns {(CFUser | undefined)} The Codeforces User info or undefined if not found
+   * @returns {(Codeforces.User | undefined)} The Codeforces User info or undefined if not found
    */
-  public async getUser(handle: string): Promise<CFUser | undefined> {
+  public async getUser(handle: string): Promise<Codeforces.User | undefined> {
     const url = this.generateMethodUrl('user.info', { handles: handle });
     try {
       const users = await axios.get(url);
       return users.data.result[0];
     } catch (error) {
       return undefined;
+    }
+  }
+
+  /**
+   * Get User Submissions from user.status CF API Method
+   *
+   * @param {string} handle
+   * @returns {Codeforces.Submission[]} The Codeforces User Submission array
+   */
+  public async getUserSubmissions(handle: string): Promise<Codeforces.Submission[]> {
+    const url = this.generateMethodUrl('user.status', { handle });
+    try {
+      const submissions = await axios.get(url);
+      return submissions.data.result;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  /**
+   * Get User Submissions from user.status CF API Method
+   *
+   * @param {string} handle
+   * @returns {Codeforces.RatingChange[]} The Codeforces User Rating Change array
+   */
+  public async getUserRatingChanges(handle: string): Promise<Codeforces.RatingChange[]> {
+    const url = this.generateMethodUrl('user.rating', { handle });
+    try {
+      const submissions = await axios.get(url);
+      return submissions.data.result;
+    } catch (error) {
+      return [];
     }
   }
 
