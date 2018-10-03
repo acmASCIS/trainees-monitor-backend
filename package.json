@@ -17,7 +17,7 @@
     "watch:test-coverage": "npm run test-coverage -- --watchAll",
     "clean": "rimraf dist",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "lint-staged": "lint-stages",
+    "lint-staged": "lint-staged",
     "prettier": "prettier --config ./.prettierrc --write \"src/**/*.ts\"",
     "tslint-check": "tslint-config-prettier-check ./tslint.json"
   },
