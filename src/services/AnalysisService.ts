@@ -1,5 +1,6 @@
 import { CodeforcesService } from './onlinejudges/CodeforcesService';
 import { Verdict } from './onlinejudges/Verdict.enum';
+import { secondsToDuration } from '../utils/secondsToDuration';
 
 export default class AnalysisService {
   private cfService: CodeforcesService = new CodeforcesService(
@@ -12,16 +13,16 @@ export default class AnalysisService {
     const ratingChanges = await this.cfService.getUserRatingChanges(codeforcesHandle);
     return {
       pastRounds: this.analysePastRounds(ratingChanges),
-      tags: this.analyseProblemsTags(submissions)
+      tags: this.analyseProblemsTags(submissions),
+      solvingRate: this.analyseSolvingRate(submissions)
     };
   }
 
-  public analysePastRounds(ratingChanges: Codeforces.RatingChange[], limit: number = 10) {
+  public analysePastRounds(ratingChanges: Codeforces.RatingChange[], limit: number = 5) {
     let averageRank = 0;
     let averageRatingChange = 0;
     const summary = ratingChanges
       .reverse()
-      .slice(0, limit)
       .map(ratingChange => {
         averageRank += ratingChange.rank;
         averageRatingChange += ratingChange.newRating - ratingChange.oldRating;
@@ -32,11 +33,12 @@ export default class AnalysisService {
           oldRating: ratingChange.oldRating,
           newRating: ratingChange.newRating
         };
-      });
+      })
+      .slice(0, limit);
 
     return {
-      averageRank: Math.floor(averageRank / summary.length),
-      averageRatingChange: Math.floor(averageRatingChange / summary.length),
+      averageRank: Math.floor(averageRank / ratingChanges.length),
+      averageRatingChange: Math.floor(averageRatingChange / ratingChanges.length),
       summary
     };
   }
@@ -54,5 +56,42 @@ export default class AnalysisService {
     }
 
     return tagsFrequency;
+  }
+
+  public analyseSolvingRate(submissions: Codeforces.Submission[]) {
+    const acceptedSubmissions = submissions.filter(submission => submission.verdict === Verdict.OK);
+
+    // Getting the months, weeks, days count from the first submission of the user
+    const firstSubmissionDuration = secondsToDuration(
+      submissions[submissions.length - 1].creationTimeSeconds
+    );
+    const monthsCount = Math.ceil(firstSubmissionDuration.asMonths());
+    const weeksCount = Math.ceil(firstSubmissionDuration.asWeeks());
+    const daysCount = Math.ceil(firstSubmissionDuration.asDays());
+
+    // Calculating past Month, Week, Day Accepted Submissions
+    const pastMonth = acceptedSubmissions.filter(submission => {
+      const duration = secondsToDuration(submission.creationTimeSeconds);
+      return duration.asMonths() <= 1;
+    }).length;
+    const pastWeek = acceptedSubmissions.filter(submission => {
+      const duration = secondsToDuration(submission.creationTimeSeconds);
+      return duration.asWeeks() <= 1;
+    }).length;
+    const pastDay = acceptedSubmissions.filter(submission => {
+      const duration = secondsToDuration(submission.creationTimeSeconds);
+      return duration.asDays() <= 1;
+    }).length;
+
+    // Average calculation: rounding to the nearest tenths
+    // formula: Math.round(number * 10) / 10
+    return {
+      monthlyAverage: Math.round((acceptedSubmissions.length / monthsCount) * 10) / 10,
+      weeklyAverage: Math.round((acceptedSubmissions.length / weeksCount) * 10) / 10,
+      dailyAverage: Math.round((acceptedSubmissions.length / daysCount) * 10) / 10,
+      pastMonth,
+      pastWeek,
+      pastDay
+    };
   }
 }
