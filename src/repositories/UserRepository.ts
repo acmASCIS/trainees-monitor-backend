@@ -33,7 +33,7 @@ export class UserRepository extends BaseRepository<User, UserType> implements IU
   }
 
   protected toEntity(item: UserType): User {
-    const { handle, name, email, password, role, onlineJudgesHandles, _id } = item;
-    return new User(handle, name, email, password, role, onlineJudgesHandles, _id);
+    const { handle, name, email, password, role, onlineJudgesHandles, _id, following } = item;
+    return new User(handle, name, email, password, role, onlineJudgesHandles, _id, following);
   }
 }

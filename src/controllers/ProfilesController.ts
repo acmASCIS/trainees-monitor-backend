@@ -17,6 +17,8 @@ export default class ProfilesController implements IController {
 
   public register(app: Application): void {
     const router = Router();
+    router.get('/follow', authorize(Role.Trainee), this.follow.bind(this));
+    router.get('/unfollow', authorize(Role.Trainee), this.unfollow.bind(this));
     router.get('/:handle', authorize(Role.Trainee), this.getProfile.bind(this));
 
     // attaching the router to the endpoint.
@@ -51,6 +53,59 @@ export default class ProfilesController implements IController {
       userProfile.lastOnlineTimeSeconds = cfInfo.lastOnlineTimeSeconds;
     }
 
+    // Loading follow info
+    const authenticatedUser = await this.userRepository.findById(req.user._id);
+    if (!authenticatedUser) {
+      throw new ApiError();
+    }
+    userProfile.isFollowed = authenticatedUser.following.indexOf(user._id as string) !== -1;
+
     res.json(userProfile);
+  }
+
+  /**
+   * @route GET /follow?:handle
+   * @desc Adds a user to the following list.
+   * @access Private
+   */
+  private async follow(req: Request, res: Response) {
+    const followingHandle = req.query.handle;
+
+    const currentUser = await this.userRepository.findById(req.user._id);
+    const followingUser = await this.userRepository.findByHandle(followingHandle);
+
+    if (!currentUser || !followingUser) {
+      throw new ApiError('Bad request', 400);
+    }
+
+    if (currentUser.following.indexOf(followingUser._id as string) === -1) {
+      currentUser.following.push(followingUser._id as string);
+    }
+    this.userRepository.update(currentUser._id as string, currentUser);
+    res.status(201).json({ success: true });
+  }
+
+  /**
+   * @route GET /unfollow?:handle
+   * @desc Removes a user to the following list.
+   * @access Private
+   */
+  private async unfollow(req: Request, res: Response) {
+    const unfollowingHandle = req.query.handle;
+
+    const currentUser = await this.userRepository.findById(req.user._id);
+    const unfollowingUser = await this.userRepository.findByHandle(unfollowingHandle);
+
+    if (!currentUser || !unfollowingUser) {
+      throw new ApiError('Bad request', 400);
+    }
+
+    const index = currentUser.following.indexOf(unfollowingUser._id as string);
+    if (index !== -1) {
+      currentUser.following.splice(index, 1);
+    }
+
+    this.userRepository.update(currentUser._id as string, currentUser);
+    res.status(201).json({ success: true });
   }
 }
