@@ -10,7 +10,8 @@ export class User {
     public password: string,
     public role: Role,
     public onlineJudgesHandles: OnlineJudgesHandles,
-    public readonly _id?: string | undefined
+    public readonly _id?: string | undefined,
+    public following: string[] = []
   ) {}
 
   public async hashPassword(): Promise<string> {

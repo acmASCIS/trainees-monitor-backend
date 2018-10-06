@@ -12,6 +12,10 @@ const userSchema = new Schema(
     role: { type: Number, required: true },
     onlineJudgesHandles: {
       codeforces: { type: String, required: true }
+    },
+    following: {
+      type: [Schema.Types.ObjectId],
+      ref: 'User'
     }
   },
   { timestamps: true }
