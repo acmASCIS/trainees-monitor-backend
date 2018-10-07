@@ -21,6 +21,6 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-userSchema.index({ handle: 'text', email: 'text' });
+userSchema.index({ handle: 'text', name: 'text', email: 'text' });
 
 export const UserModel: Model<UserType> = model<UserType>('User', userSchema);

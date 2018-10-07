@@ -1,4 +1,5 @@
 import { Model } from 'mongoose';
+import _ from 'lodash';
 
 import { BaseRepository } from './BaseRepository';
 import { UserModel, UserType } from './../models/User/UserSchema';
@@ -7,6 +8,8 @@ import { User } from '../models/User/User';
 export interface IUserRepository extends BaseRepository<User, UserType> {
   findByEmail(email: string): Promise<User | undefined>;
   findByHandle(handle: string): Promise<User | undefined>;
+  findFollowing(id: string): Promise<User[]>;
+  searchUsers(query: string): Promise<User[]>;
 }
 
 export class UserRepository extends BaseRepository<User, UserType> implements IUserRepository {
@@ -30,6 +33,27 @@ export class UserRepository extends BaseRepository<User, UserType> implements IU
       return undefined;
     }
     return this.toEntity(model[0]);
+  }
+
+  public async findFollowing(id: string): Promise<User[]> {
+    const model = await this._model.findById(id).populate('following');
+
+    if (!model) {
+      return [];
+    }
+    return model.following.map((user: any) => this.toEntity(user));
+  }
+
+  public async searchUsers(query: string): Promise<User[]> {
+    const model = await this._model
+      .aggregate()
+      .match({ $text: { $search: query } })
+      .sort({ score: { $meta: 'textScore' } });
+
+    if (!model) {
+      return [];
+    }
+    return model.map(user => this.toEntity(user));
   }
 
   protected toEntity(item: UserType): User {
