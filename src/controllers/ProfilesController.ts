@@ -17,8 +17,9 @@ export default class ProfilesController implements IController {
 
   public register(app: Application): void {
     const router = Router();
-    router.get('/follow', authorize(Role.Trainee), this.follow.bind(this));
-    router.get('/unfollow', authorize(Role.Trainee), this.unfollow.bind(this));
+    router.post('/follow', authorize(Role.Trainee), this.follow.bind(this));
+    router.post('/unfollow', authorize(Role.Trainee), this.unfollow.bind(this));
+    router.get('/following', authorize(Role.Trainee), this.following.bind(this));
     router.get('/:handle', authorize(Role.Trainee), this.getProfile.bind(this));
 
     // attaching the router to the endpoint.
@@ -52,7 +53,6 @@ export default class ProfilesController implements IController {
       userProfile.rating = cfInfo.rating;
       userProfile.lastOnlineTimeSeconds = cfInfo.lastOnlineTimeSeconds;
     }
-
     // Loading follow info
     const authenticatedUser = await this.userRepository.findById(req.user._id);
     if (!authenticatedUser) {
@@ -64,7 +64,7 @@ export default class ProfilesController implements IController {
   }
 
   /**
-   * @route GET /follow?:handle
+   * @route POST profile/follow?handle={handle}
    * @desc Adds a user to the following list.
    * @access Private
    */
@@ -82,11 +82,11 @@ export default class ProfilesController implements IController {
       currentUser.following.push(followingUser._id as string);
     }
     this.userRepository.update(currentUser._id as string, currentUser);
-    res.status(201).json({ success: true });
+    res.json({ success: true });
   }
 
   /**
-   * @route GET /unfollow?:handle
+   * @route POST profile/unfollow?handle={handle}
    * @desc Removes a user to the following list.
    * @access Private
    */
@@ -106,6 +106,21 @@ export default class ProfilesController implements IController {
     }
 
     this.userRepository.update(currentUser._id as string, currentUser);
-    res.status(201).json({ success: true });
+    res.json({ success: true });
+  }
+
+  /**
+   * @route GET profile/following
+   * @desc Returns the following users list.
+   * @access Private
+   */
+  private async following(req: Request, res: Response) {
+    const followingUsers = await this.userRepository.findFollowing(req.user._id);
+    const followingFiltered = followingUsers.map(user => {
+      return _.pick(user, ['handle', 'name', 'email', 'role', 'onlineJudgesHandles']);
+    });
+    followingFiltered.forEach((user: any) => (user.isFollowed = true));
+
+    res.send(followingFiltered);
   }
 }
