@@ -58,6 +58,22 @@ export class CodeforcesService {
   }
 
   /**
+   * Get Contest Standings from contest.standings CF API Method
+   *
+   * @param {string} contestId
+   * @returns {any} The Codeforces Standings object
+   */
+  public async getContestStandings(contestId: string): Promise<any> {
+    const url = this.generateMethodUrl('contest.standings', { contestId });
+    try {
+      const submissions = await axios.get(url);
+      return submissions.data.result;
+    } catch (error) {
+      return undefined;
+    }
+  }
+
+  /**
    * Generate the URL required for a specific method
    *
    * @param {string} methodName - The name of the method in CF API
