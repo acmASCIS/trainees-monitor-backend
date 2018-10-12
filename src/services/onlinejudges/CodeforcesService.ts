@@ -61,15 +61,48 @@ export class CodeforcesService {
    * Get Contest Standings from contest.standings CF API Method
    *
    * @param {string} contestId
+   * @param {string} handle - optional codeforces handle
+   * @param {boolean} showUnofficial - show unofficial standings, defaults to true
    * @returns {any} The Codeforces Standings object
    */
-  public async getContestStandings(contestId: string): Promise<any> {
-    const url = this.generateMethodUrl('contest.standings', { contestId });
+  public async getContestStandings(
+    contestId: string,
+    handle?: string,
+    showUnofficial: boolean = true
+  ): Promise<any> {
+    const url = this.generateMethodUrl('contest.standings', {
+      contestId,
+      handles: handle,
+      showUnofficial
+    });
     try {
       const submissions = await axios.get(url);
       return submissions.data.result;
     } catch (error) {
       return undefined;
+    }
+  }
+
+  /**
+   * Get Contest Submissions from contest.status CF API Method
+   *
+   * @param {string} contestId
+   * @param {string} handle - optional codeforces handle
+   * @returns {any} The Codeforces Standings object
+   */
+  public async getContestSubmissions(
+    contestId: string,
+    handle?: string
+  ): Promise<Codeforces.Submission[]> {
+    const url = this.generateMethodUrl('contest.status', {
+      contestId,
+      handle
+    });
+    try {
+      const submissions = await axios.get(url);
+      return submissions.data.result;
+    } catch (error) {
+      return [];
     }
   }
 

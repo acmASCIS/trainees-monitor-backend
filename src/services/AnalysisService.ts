@@ -1,17 +1,22 @@
+import _ from 'lodash';
 import { CodeforcesService } from './onlinejudges/CodeforcesService';
 import { Verdict } from './onlinejudges/Verdict.enum';
 import { secondsToDuration } from '../utils/secondsToDuration';
+import { ICFContestRepository, CFContestRepository } from '../repositories/CFContestRepository';
 
 export default class AnalysisService {
+  private cfContestsRepository: ICFContestRepository = new CFContestRepository();
   private cfService: CodeforcesService = new CodeforcesService(
     process.env.CF_KEY as string,
     process.env.CF_SECRET as string
   );
 
   public async analyseProfile(codeforcesHandle: string) {
+    // TODO: run API calls in parallel
     const submissions = await this.cfService.getUserSubmissions(codeforcesHandle);
     const ratingChanges = await this.cfService.getUserRatingChanges(codeforcesHandle);
     return {
+      sheetsParticipation: await this.analyseSheets(codeforcesHandle),
       pastRounds: this.analysePastRounds(ratingChanges),
       tags: this.analyseProblemsTags(submissions),
       solvingRate: this.analyseSolvingRate(submissions)
@@ -93,5 +98,28 @@ export default class AnalysisService {
       pastWeek,
       pastDay
     };
+  }
+
+  public async analyseSheets(codeforcesHandle: string) {
+    // Fetching all contests
+    const contests = (await this.cfContestsRepository.findAll())
+      .sort((a, b) => +b._id - +a._id)
+      .slice(0, 5);
+    return await Promise.all(
+      contests.map(async contest => {
+        // Fetching contest Standings, Submissions
+        const standings = await this.cfService.getContestStandings(contest._id, codeforcesHandle);
+        let submissions = await this.cfService.getContestSubmissions(contest._id, codeforcesHandle);
+        submissions = submissions.filter(submission => submission.verdict === Verdict.OK);
+        submissions = _.uniqBy(submissions, 'problem.name');
+
+        return {
+          contestName: contest.name,
+          rank: standings.rows[0] ? standings.rows[0].rank : 0,
+          solvedCount: submissions.length,
+          solvedProblems: submissions.map(submission => submission.problem.index)
+        };
+      })
+    );
   }
 }

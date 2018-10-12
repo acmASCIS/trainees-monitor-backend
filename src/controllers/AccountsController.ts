@@ -5,9 +5,14 @@ import { User } from '../models/User/User';
 import { IUserRepository, UserRepository } from './../repositories/UserRepository';
 import { validateRegisterInput, validateLoginInput } from '../utils/validation';
 import { ApiError } from './../utils/ApiError';
+import { CodeforcesService } from '../services/onlinejudges/CodeforcesService';
 
 export default class AccountsController implements IController {
   private userRepository: IUserRepository = new UserRepository();
+  private cfService: CodeforcesService = new CodeforcesService(
+    process.env.CF_KEY as string,
+    process.env.CF_SECRET as string
+  );
 
   public register(app: Application): void {
     app.post('/register', this.registerUser.bind(this));
@@ -26,8 +31,14 @@ export default class AccountsController implements IController {
       throw new ApiError('Invalid Input', 400, errors);
     }
 
-    // creating new user and hashing the password
     const { handle, name, email, password, role, codeforcesHandle } = req.body;
+    // validate codeforces handle;
+    const cfUser = await this.cfService.getUser(codeforcesHandle);
+    if (!cfUser) {
+      throw new ApiError('Invalid Input', 400, { codeforcesHandle: 'Handle does not exist' });
+    }
+
+    // creating new user and hashing the password
     const user: User = new User(handle, name, email, password, role, {
       codeforces: codeforcesHandle
     });

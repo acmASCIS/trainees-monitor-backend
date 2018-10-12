@@ -16,6 +16,7 @@ declare namespace Codeforces {
   interface Problem {
     contestId: number;
     problemsetName: string;
+    index: string;
     name: string;
     tags: string[];
   }
