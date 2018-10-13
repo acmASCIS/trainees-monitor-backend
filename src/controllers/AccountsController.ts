@@ -1,4 +1,5 @@
 import { Application, Request, Response } from 'express';
+import _ from 'lodash';
 
 import { IController } from './IController';
 import { User } from '../models/User/User';
@@ -20,6 +21,7 @@ export default class AccountsController implements IController {
     app.post('/register', this.registerUser.bind(this));
     app.post('/login', this.login.bind(this));
     app.post('/confirm', authorize(Role.Admin), this.confirmUser.bind(this));
+    app.get('/unconfirmed', authorize(Role.Admin), this.getUnconfirmedUsers.bind(this));
   }
 
   /**
@@ -38,7 +40,9 @@ export default class AccountsController implements IController {
     // validate codeforces handle;
     const cfUser = await this.cfService.getUser(codeforcesHandle);
     if (!cfUser) {
-      throw new ApiError('Invalid Input', 400, { codeforcesHandle: 'Handle does not exist' });
+      throw new ApiError('Invalid Input', 400, {
+        codeforcesHandle: 'Handle does not exist'
+      });
     }
 
     // Trainee is confirmed by default
@@ -51,18 +55,20 @@ export default class AccountsController implements IController {
       email,
       password,
       role,
-      {
-        codeforces: codeforcesHandle
-      },
+      { codeforces: codeforcesHandle },
       isConfirmed
     );
     user.password = await user.hashPassword();
 
     // Checking duplicate user email and handle
     if (await this.userRepository.findByEmail(email)) {
-      throw new ApiError('Invalid Input', 400, { email: 'Email already exists' });
+      throw new ApiError('Invalid Input', 400, {
+        email: 'Email already exists'
+      });
     } else if (await this.userRepository.findByHandle(handle)) {
-      throw new ApiError('Invalid Input', 400, { handle: 'Handle already exists' });
+      throw new ApiError('Invalid Input', 400, {
+        handle: 'Handle already exists'
+      });
     } else {
       await this.userRepository.create(user);
       res.status(201).json({ success: true });
@@ -118,5 +124,20 @@ export default class AccountsController implements IController {
     user.isConfirmed = true;
     await this.userRepository.update(user._id as string, user);
     res.json({ success: true });
+  }
+
+  /**
+   * @route GET /unconfirmed
+   * @desc Gets a list of unconfirmed users.
+   * @access Private
+   */
+  private async getUnconfirmedUsers(req: Request, res: Response) {
+    const unconfirmedUsers = await this.userRepository.find({ isConfirmed: false });
+    const filteredUsers = unconfirmedUsers.map(
+      (user: any) =>
+        (user = _.pick(user, ['handle', 'name', 'email', 'role', 'onlineJudgesHandles']))
+    );
+
+    res.json(filteredUsers);
   }
 }

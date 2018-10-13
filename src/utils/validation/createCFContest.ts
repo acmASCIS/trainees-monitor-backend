@@ -3,7 +3,7 @@ import { toErrorBody } from './toErrorBody';
 
 export function validateCreateContestInput(input: any) {
   const createInputSchema = {
-    contestId: joi.string()
+    contestId: joi.number()
   };
 
   const { error } = joi.validate(input, createInputSchema, {
