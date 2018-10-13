@@ -10,6 +10,7 @@ export class User {
     public password: string,
     public role: Role,
     public onlineJudgesHandles: OnlineJudgesHandles,
+    public isConfirmed: boolean,
     public readonly _id?: string | undefined,
     public following: string[] = []
   ) {}

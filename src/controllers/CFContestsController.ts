@@ -19,8 +19,8 @@ export default class CFContestsController implements IController {
   public register(app: express.Application): void {
     const router = Router();
     router.get('/', authorize(Role.Trainee), this.getContests.bind(this));
-    router.post('/', authorize(Role.Trainee), this.createContest.bind(this));
-    router.delete('/', authorize(Role.Trainee), this.deleteContest.bind(this));
+    router.post('/', authorize(Role.Admin), this.createContest.bind(this));
+    router.delete('/', authorize(Role.Admin), this.deleteContest.bind(this));
 
     // attaching the router to the endpoint.
     app.use('/cfcontests', router);
