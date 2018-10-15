@@ -5,7 +5,7 @@ describe('Getting User Info', () => {
   let codeforcesService: CodeforcesService;
 
   beforeAll(() => {
-    dotenv.load();
+    dotenv.config({ path: '.env.dev' });
     codeforcesService = new CodeforcesService(process.env.CF_KEY, process.env.CF_SECRET);
   });
 
