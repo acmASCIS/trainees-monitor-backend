@@ -1,6 +1,9 @@
+import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
-import './config';
+// loading env file before importing any module
+dotenv.load();
+
 import Server from './Server';
 
 const server: Server = new Server();
