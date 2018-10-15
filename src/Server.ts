@@ -51,7 +51,7 @@ export default class Server {
     this.app.use(
       cors({
         origin: ['http://localhost:3001'],
-        methods: ['GET', 'POST', 'DELETE'],
+        methods: ['GET', 'POST'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         exposedHeaders: ['Authorization']
       })

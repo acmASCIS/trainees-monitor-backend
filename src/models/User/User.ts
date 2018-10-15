@@ -10,7 +10,6 @@ export class User {
     public password: string,
     public role: Role,
     public onlineJudgesHandles: OnlineJudgesHandles,
-    public isConfirmed: boolean,
     public readonly _id?: string | undefined,
     public following: string[] = []
   ) {}
@@ -26,8 +25,7 @@ export class User {
   public generateAuthToken(): string {
     return jwt.sign(
       { _id: this._id, handle: this.handle, name: this.name, role: this.role },
-      process.env.JWT_SECRET as string,
-      { expiresIn: process.env.JWT_EXPIRY }
+      process.env.JWT_SECRET as string
     );
   }
 }

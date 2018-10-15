@@ -10,7 +10,6 @@ const userSchema = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: Number, required: true },
-    isConfirmed: { type: Boolean, required: true, default: false },
     onlineJudgesHandles: {
       codeforces: { type: String, required: true }
     },
