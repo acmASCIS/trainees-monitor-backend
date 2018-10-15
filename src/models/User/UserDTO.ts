@@ -1,8 +1,7 @@
-import { User } from './User';
-
 export enum Role {
   Trainee,
-  Mentor
+  Mentor,
+  Admin
 }
 
 enum OnlineJudge {
@@ -17,6 +16,7 @@ export interface UserDTO {
   email: string;
   password: string;
   role: Role;
+  isConfirmed: boolean;
   following: string[];
   onlineJudgesHandles: OnlineJudgesHandles;
 }
