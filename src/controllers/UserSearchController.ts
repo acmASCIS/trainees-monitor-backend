@@ -21,7 +21,7 @@ export default class UserSearchController implements IController {
    */
   private async userSearch(req: Request, res: Response) {
     const query = req.query.query;
-    const searchResult = (await this.userRepository.searchUsers(query)).slice(0, 10);
+    const searchResult = await this.userRepository.searchUsers(query);
 
     // Getting current user
     const authenticatedUser = await this.userRepository.findById(req.user._id);
