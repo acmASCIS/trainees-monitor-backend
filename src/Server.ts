@@ -50,7 +50,7 @@ export default class Server {
 
     this.app.use(
       cors({
-        origin: ['http://localhost:3001'],
+        origin: [process.env.CLIENT_URL as string],
         methods: ['GET', 'POST', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         exposedHeaders: ['Authorization']
