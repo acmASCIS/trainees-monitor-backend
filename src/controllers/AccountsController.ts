@@ -84,7 +84,7 @@ export default class AccountsController implements IController {
     // validate login input
     const { errors } = validateLoginInput(req.body);
     if (errors) {
-      throw new ApiError('Invalid email or password', 404);
+      throw new ApiError('Invalid email or password', 400);
     }
 
     // check if user exists
