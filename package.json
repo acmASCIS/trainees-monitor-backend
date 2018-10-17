@@ -3,14 +3,19 @@
   "version": "1.0.0",
   "description": "Trainees monitoring application on Online Judges made for acmAscis",
   "main": "dist/index.js",
+  "engines": {
+    "node": "10.4.1",
+    "npm": "6.1.0"
+  },
   "scripts": {
-    "start": "npm-run-all build start:server",
+    "start": "npm run start:server",
     "start:dev": "npm-run-all --parallel watch:ts watch:server",
     "build": "npm-run-all clean build:ts",
     "start:server": "node dist/index.js",
     "watch:server": "nodemon dist/index.js",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
+    "postinstall": "npm run build:ts",
     "test": "jest --forceExit --verbose",
     "test-coverage": "jest --forceExit --coverage --verbose",
     "watch:test": "npm run test -- --watchAll",
