@@ -42,8 +42,8 @@ export default class AnalysisService {
       .slice(0, limit);
 
     return {
-      averageRank: Math.floor(averageRank / ratingChanges.length),
-      averageRatingChange: Math.floor(averageRatingChange / ratingChanges.length),
+      averageRank: Math.floor(averageRank / (ratingChanges.length || 1)),
+      averageRatingChange: Math.floor(averageRatingChange / (ratingChanges.length || 1)),
       summary
     };
   }
@@ -64,6 +64,18 @@ export default class AnalysisService {
   }
 
   public analyseSolvingRate(submissions: Codeforces.Submission[]) {
+    // No submissions found
+    if (submissions.length === 0) {
+      return {
+        monthlyAverage: 0,
+        weeklyAverage: 0,
+        dailyAverage: 0,
+        pastMonth: 0,
+        pastWeek: 0,
+        pastDay: 0
+      };
+    }
+
     const acceptedSubmissions = submissions.filter(submission => submission.verdict === Verdict.OK);
 
     // Getting the months, weeks, days count from the first submission of the user
