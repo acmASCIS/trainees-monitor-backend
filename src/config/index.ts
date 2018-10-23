@@ -1,1 +1,2 @@
+import './axiosConfig';
 import './envConfig';
