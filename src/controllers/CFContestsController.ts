@@ -33,7 +33,7 @@ export default class CFContestsController implements IController {
    */
   private async getContests(req: Request, res: Response) {
     const contests = await this.cotenstsRepository.findAll();
-    res.json(contests);
+    res.json(contests.sort((a, b) => +b._id - +a._id));
   }
 
   /**
