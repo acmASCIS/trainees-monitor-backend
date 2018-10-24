@@ -116,7 +116,7 @@ export default class AnalysisService {
     // Fetching all contests
     const contests = (await this.cfContestsRepository.findAll())
       .sort((a, b) => +b._id - +a._id)
-      .slice(0, 10);
+      .slice(0, 5);
 
     const contestsAnalysis: any[] = [];
     for (const contest of contests) {
