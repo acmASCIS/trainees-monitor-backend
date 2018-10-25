@@ -4,7 +4,21 @@ import { toErrorBody } from './toErrorBody';
 
 export function validateRegisterInput(input: any) {
   const registerInputSchema = {
-    handle: joi.string().token(),
+    handle: joi
+      .string()
+      .regex(/^[A-Za-z0-9._-]+$/)
+      .error(err => {
+        if (err[0].type === 'string.regex.base') {
+          return {
+            message: '"handle" must only contain alpha-numeric, _, -, and . characters',
+            ...err
+          };
+        } else {
+          return err;
+        }
+      })
+      .min(3)
+      .max(20),
     name: joi
       .string()
       .min(3)
