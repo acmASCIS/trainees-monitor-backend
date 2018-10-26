@@ -29,17 +29,19 @@ export default class UserSearchController implements IController {
       throw new ApiError();
     }
 
-    const searchResultFiltered = searchResult.map(user => {
-      const filteredUser: any = _.pick(user, [
-        'handle',
-        'name',
-        'email',
-        'role',
-        'onlineJudgesHandles'
-      ]);
-      filteredUser.isFollowed = authenticatedUser.following.indexOf(user._id as string) !== -1;
-      return filteredUser;
-    });
+    const searchResultFiltered = searchResult
+      .map(user => {
+        const filteredUser: any = _.pick(user, [
+          'handle',
+          'name',
+          'email',
+          'role',
+          'onlineJudgesHandles'
+        ]);
+        filteredUser.isFollowed = authenticatedUser.following.indexOf(user._id as string) !== -1;
+        return filteredUser;
+      })
+      .filter(user => user.role !== Role.Admin && user.name !== req.user.name);
 
     res.send(searchResultFiltered);
   }

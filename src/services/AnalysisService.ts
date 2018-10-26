@@ -3,6 +3,7 @@ import { CodeforcesService } from './onlinejudges/CodeforcesService';
 import { Verdict } from './onlinejudges/Verdict.enum';
 import { secondsToDuration } from '../utils/secondsToDuration';
 import { ICFContestRepository, CFContestRepository } from '../repositories/CFContestRepository';
+import { sortObjectKeys } from '../utils/sortObjectKeys';
 
 export default class AnalysisService {
   private cfContestsRepository: ICFContestRepository = new CFContestRepository();
@@ -60,7 +61,7 @@ export default class AnalysisService {
       }
     }
 
-    return tagsFrequency;
+    return sortObjectKeys(tagsFrequency);
   }
 
   public analyseSolvingRate(submissions: Codeforces.Submission[]) {
@@ -117,21 +118,24 @@ export default class AnalysisService {
     const contests = (await this.cfContestsRepository.findAll())
       .sort((a, b) => +b._id - +a._id)
       .slice(0, 5);
-    return await Promise.all(
-      contests.map(async contest => {
-        // Fetching contest Standings, Submissions
-        const standings = await this.cfService.getContestStandings(contest._id, codeforcesHandle);
-        let submissions = await this.cfService.getContestSubmissions(contest._id, codeforcesHandle);
-        submissions = submissions.filter(submission => submission.verdict === Verdict.OK);
-        submissions = _.uniqBy(submissions, 'problem.name');
 
-        return {
-          contestName: contest.name,
-          rank: standings.rows[0] ? standings.rows[0].rank : 0,
-          solvedCount: submissions.length,
-          solvedProblems: submissions.map(submission => submission.problem.index)
-        };
-      })
-    );
+    const contestsAnalysis: any[] = [];
+    for (const contest of contests) {
+      const standings = await this.cfService.getContestStandings(contest._id, codeforcesHandle);
+      let submissions = await this.cfService.getContestSubmissions(contest._id, codeforcesHandle);
+      submissions = submissions.filter(submission => submission.verdict === Verdict.OK);
+      submissions = _.uniqBy(submissions, 'problem.name');
+      contestsAnalysis.push({
+        contestName: contest.name,
+        rank: standings
+          ? standings.rows[0]
+            ? standings.rows[0].rank
+            : 0
+          : 'Failed to get the rank',
+        solvedCount: submissions.length,
+        solvedProblems: submissions.map(submission => submission.problem.index).sort()
+      });
+    }
+    return contestsAnalysis;
   }
 }
