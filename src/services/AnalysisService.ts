@@ -3,6 +3,7 @@ import { CodeforcesService } from './onlinejudges/CodeforcesService';
 import { Verdict } from './onlinejudges/Verdict.enum';
 import { secondsToDuration } from '../utils/secondsToDuration';
 import { ICFContestRepository, CFContestRepository } from '../repositories/CFContestRepository';
+import { sortObjectKeys } from '../utils/sortObjectKeys';
 
 export default class AnalysisService {
   private cfContestsRepository: ICFContestRepository = new CFContestRepository();
@@ -60,7 +61,7 @@ export default class AnalysisService {
       }
     }
 
-    return tagsFrequency;
+    return sortObjectKeys(tagsFrequency);
   }
 
   public analyseSolvingRate(submissions: Codeforces.Submission[]) {
@@ -132,7 +133,7 @@ export default class AnalysisService {
             : 0
           : 'Failed to get the rank',
         solvedCount: submissions.length,
-        solvedProblems: submissions.map(submission => submission.problem.index)
+        solvedProblems: submissions.map(submission => submission.problem.index).sort()
       });
     }
     return contestsAnalysis;
