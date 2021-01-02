@@ -4,8 +4,8 @@ import axiosRetry from 'axios-retry';
 // Setting up retry in case of 429 response (Too many requests)
 axiosRetry(axios, {
   retries: 3,
-  retryCondition: error => {
+  retryCondition: (error) => {
     return error.response ? error.response.status === 429 : false;
   },
-  retryDelay: count => count * 1000
+  retryDelay: (count) => count * 1000,
 });

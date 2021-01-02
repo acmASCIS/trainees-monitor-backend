@@ -9,12 +9,12 @@ export abstract class BaseRepository<TEntity, TModel extends Document>
 
   public async findAll(): Promise<TEntity[]> {
     const models = await this._model.find({});
-    return models.map(model => this.toEntity(model));
+    return models.map((model) => this.toEntity(model));
   }
 
   public async find(item: any): Promise<TEntity[]> {
     const models = await this._model.find(item);
-    return models.map(model => this.toEntity(model));
+    return models.map((model) => this.toEntity(model));
   }
 
   public async findById(id: string): Promise<TEntity | undefined> {

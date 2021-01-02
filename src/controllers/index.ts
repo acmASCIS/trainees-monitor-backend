@@ -10,7 +10,7 @@ const controllers: IController[] = [
   new ProfilesController(),
   new AnalysisController(),
   new UserSearchController(),
-  new CFContestsController()
+  new CFContestsController(),
 ];
 
 export default controllers;

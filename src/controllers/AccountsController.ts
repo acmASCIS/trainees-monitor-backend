@@ -41,7 +41,7 @@ export default class AccountsController implements IController {
     const cfUser = await this.cfService.getUser(codeforcesHandle);
     if (!cfUser) {
       throw new ApiError('Invalid Input', 400, {
-        codeforcesHandle: 'Handle does not exist'
+        codeforcesHandle: 'Handle does not exist',
       });
     }
 
@@ -63,11 +63,11 @@ export default class AccountsController implements IController {
     // Checking duplicate user email and handle
     if (await this.userRepository.findByEmail(email)) {
       throw new ApiError('Invalid Input', 400, {
-        email: 'Email already exists'
+        email: 'Email already exists',
       });
     } else if (await this.userRepository.findByHandle(handle)) {
       throw new ApiError('Invalid Input', 400, {
-        handle: 'Handle already exists'
+        handle: 'Handle already exists',
       });
     } else {
       await this.userRepository.create(user);
@@ -115,7 +115,7 @@ export default class AccountsController implements IController {
    * @access Private
    */
   private async confirmUser(req: Request, res: Response) {
-    const handle = req.query.handle;
+    const handle = req.query.handle as string;
     const user = await this.userRepository.findByHandle(handle);
     if (!user) {
       throw new ApiError('User not found', 404);

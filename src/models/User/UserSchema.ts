@@ -12,12 +12,12 @@ const userSchema = new Schema(
     role: { type: Number, required: true },
     isConfirmed: { type: Boolean, required: true, default: false },
     onlineJudgesHandles: {
-      codeforces: { type: String, required: true }
+      codeforces: { type: String, required: true },
     },
     following: {
       type: [Schema.Types.ObjectId],
-      ref: 'User'
-    }
+      ref: 'User',
+    },
   },
   { timestamps: true }
 );
