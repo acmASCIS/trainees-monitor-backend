@@ -6,7 +6,7 @@ export type CFContestType = CFContestDTO & Document;
 const contestSchema = new Schema(
   {
     _id: Number,
-    name: { type: String, required: true }
+    name: { type: String, required: true },
   },
   { timestamps: true }
 );

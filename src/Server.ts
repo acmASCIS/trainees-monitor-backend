@@ -53,13 +53,13 @@ export default class Server {
         origin: [process.env.CLIENT_URL as string],
         methods: ['GET', 'POST', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
-        exposedHeaders: ['Authorization']
+        exposedHeaders: ['Authorization'],
       })
     );
   }
 
   private registerControllers(): void {
-    controllers.forEach(controller => controller.register(this.app));
+    controllers.forEach((controller) => controller.register(this.app));
   }
 
   private registerErrorHandlers(): void {

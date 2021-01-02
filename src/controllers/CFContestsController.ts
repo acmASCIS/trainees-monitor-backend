@@ -51,7 +51,7 @@ export default class CFContestsController implements IController {
     // Checking existing contest
     if (await this.cotenstsRepository.findById(req.body.contestId)) {
       throw new ApiError('Invalid Input', 400, {
-        contestId: 'Contest Already Exists'
+        contestId: 'Contest Already Exists',
       });
     }
 
@@ -79,7 +79,7 @@ export default class CFContestsController implements IController {
     // Checking not existing contest
     if (!(await this.cotenstsRepository.findById(req.body.contestId))) {
       throw new ApiError('Invalid Input', 400, {
-        contestId: 'Contest does not exist'
+        contestId: 'Contest does not exist',
       });
     }
 
