@@ -3,15 +3,15 @@ import { toErrorBody } from './toErrorBody';
 
 export function validateCreateContestInput(input: any) {
   const createInputSchema = {
-    contestId: joi.number()
+    contestId: joi.number(),
   };
 
   const { error } = joi.validate(input, createInputSchema, {
     abortEarly: false,
-    presence: 'required'
+    presence: 'required',
   });
 
   return {
-    errors: error ? toErrorBody(error) : undefined
+    errors: error ? toErrorBody(error) : undefined,
   };
 }

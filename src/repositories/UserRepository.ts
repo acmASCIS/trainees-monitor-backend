@@ -53,7 +53,7 @@ export class UserRepository extends BaseRepository<User, UserType> implements IU
     if (!model) {
       return [];
     }
-    return model.map(user => this.toEntity(user));
+    return model.map((user) => this.toEntity(user));
   }
 
   protected toEntity(item: UserType): User {
@@ -66,7 +66,7 @@ export class UserRepository extends BaseRepository<User, UserType> implements IU
       onlineJudgesHandles,
       isConfirmed,
       _id,
-      following
+      following,
     } = item;
     return new User(
       handle,
