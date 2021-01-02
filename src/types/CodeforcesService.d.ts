@@ -38,7 +38,7 @@ declare namespace Codeforces {
     CHALLENGED = 'CHALLENGED',
     SKIPPED = 'SKIPPED',
     TESTING = 'TESTING',
-    REJECTED = 'REJECTED'
+    REJECTED = 'REJECTED',
   }
 
   interface Submission {

@@ -20,7 +20,7 @@ export default class UserSearchController implements IController {
    * @access Private
    */
   private async userSearch(req: Request, res: Response) {
-    const query = req.query.query;
+    const query = req.query.query as string;
     const searchResult = (await this.userRepository.searchUsers(query)).slice(0, 10);
 
     // Getting current user
@@ -30,18 +30,18 @@ export default class UserSearchController implements IController {
     }
 
     const searchResultFiltered = searchResult
-      .map(user => {
+      .map((user) => {
         const filteredUser: any = _.pick(user, [
           'handle',
           'name',
           'email',
           'role',
-          'onlineJudgesHandles'
+          'onlineJudgesHandles',
         ]);
         filteredUser.isFollowed = authenticatedUser.following.indexOf(user._id as string) !== -1;
         return filteredUser;
       })
-      .filter(user => user.role !== Role.Admin && user.name !== req.user.name);
+      .filter((user) => user.role !== Role.Admin && user.name !== req.user.name);
 
     res.send(searchResultFiltered);
   }
