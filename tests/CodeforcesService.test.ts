@@ -6,7 +6,10 @@ describe('Getting User Info', () => {
 
   beforeAll(() => {
     dotenv.config({ path: '.env.dev' });
-    codeforcesService = new CodeforcesService(process.env.CF_KEY, process.env.CF_SECRET);
+    codeforcesService = new CodeforcesService(
+      process.env.CF_KEY as string,
+      process.env.CF_SECRET as string
+    );
   });
 
   it('should get the user info correctly', async () => {
@@ -15,7 +18,7 @@ describe('Getting User Info', () => {
       handle: 'acmASCIS',
       rating: 1963,
       maxRating: 1963,
-      maxRank: 'candidate master'
+      maxRank: 'candidate master',
     });
   });
 
