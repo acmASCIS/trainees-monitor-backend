@@ -43,7 +43,7 @@ export default class ProfilesController implements IController {
       'name',
       'email',
       'onlineJudgesHandles',
-      'role'
+      'role',
     ]);
 
     // Loading Codeforces User info
@@ -69,7 +69,7 @@ export default class ProfilesController implements IController {
    * @access Private
    */
   private async follow(req: Request, res: Response) {
-    const followingHandle = req.query.handle;
+    const followingHandle = req.query.handle as string;
 
     const currentUser = await this.userRepository.findById(req.user._id);
     const followingUser = await this.userRepository.findByHandle(followingHandle);
@@ -91,7 +91,7 @@ export default class ProfilesController implements IController {
    * @access Private
    */
   private async unfollow(req: Request, res: Response) {
-    const unfollowingHandle = req.query.handle;
+    const unfollowingHandle = req.query.handle as string;
 
     const currentUser = await this.userRepository.findById(req.user._id);
     const unfollowingUser = await this.userRepository.findByHandle(unfollowingHandle);
@@ -116,7 +116,7 @@ export default class ProfilesController implements IController {
    */
   private async following(req: Request, res: Response) {
     const followingUsers = await this.userRepository.findFollowing(req.user._id);
-    const followingFiltered = followingUsers.map(user => {
+    const followingFiltered = followingUsers.map((user) => {
       return _.pick(user, ['handle', 'name', 'email', 'role', 'onlineJudgesHandles']);
     });
     followingFiltered.forEach((user: any) => (user.isFollowed = true));

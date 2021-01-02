@@ -73,7 +73,7 @@ export class CodeforcesService {
     const url = this.generateMethodUrl('contest.standings', {
       contestId,
       handles: handle,
-      showUnofficial
+      showUnofficial,
     });
     try {
       const submissions = await axios.get(url);
@@ -96,7 +96,7 @@ export class CodeforcesService {
   ): Promise<Codeforces.Submission[]> {
     const url = this.generateMethodUrl('contest.status', {
       contestId,
-      handle
+      handle,
     });
     try {
       const submissions = await axios.get(url);
@@ -126,9 +126,7 @@ export class CodeforcesService {
    * Generate random string of size 6 as the apiSig start
    */
   private generateRandomStart(): string {
-    return Math.random()
-      .toString(36)
-      .substring(2, 8);
+    return Math.random().toString(36).substring(2, 8);
   }
 
   /**
@@ -152,7 +150,7 @@ export class CodeforcesService {
    */
   private toParamsString(params: any): string {
     return Object.keys(params)
-      .map(key => `${key}=${params[key]}`)
+      .map((key) => `${key}=${params[key]}`)
       .join('&');
   }
 }

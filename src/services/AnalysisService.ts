@@ -20,7 +20,7 @@ export default class AnalysisService {
       sheetsParticipation: await this.analyseSheets(codeforcesHandle),
       pastRounds: this.analysePastRounds(ratingChanges),
       tags: this.analyseProblemsTags(submissions),
-      solvingRate: this.analyseSolvingRate(submissions)
+      solvingRate: this.analyseSolvingRate(submissions),
     };
   }
 
@@ -29,7 +29,7 @@ export default class AnalysisService {
     let averageRatingChange = 0;
     const summary = ratingChanges
       .reverse()
-      .map(ratingChange => {
+      .map((ratingChange) => {
         averageRank += ratingChange.rank;
         averageRatingChange += ratingChange.newRating - ratingChange.oldRating;
         return {
@@ -37,7 +37,7 @@ export default class AnalysisService {
           rank: ratingChange.rank,
           ratingChange: ratingChange.newRating - ratingChange.oldRating,
           oldRating: ratingChange.oldRating,
-          newRating: ratingChange.newRating
+          newRating: ratingChange.newRating,
         };
       })
       .slice(0, limit);
@@ -45,7 +45,7 @@ export default class AnalysisService {
     return {
       averageRank: Math.floor(averageRank / (ratingChanges.length || 1)),
       averageRatingChange: Math.floor(averageRatingChange / (ratingChanges.length || 1)),
-      summary
+      summary,
     };
   }
 
@@ -73,11 +73,13 @@ export default class AnalysisService {
         dailyAverage: 0,
         pastMonth: 0,
         pastWeek: 0,
-        pastDay: 0
+        pastDay: 0,
       };
     }
 
-    const acceptedSubmissions = submissions.filter(submission => submission.verdict === Verdict.OK);
+    const acceptedSubmissions = submissions.filter(
+      (submission) => submission.verdict === Verdict.OK
+    );
 
     // Getting the months, weeks, days count from the first submission of the user
     const firstSubmissionDuration = secondsToDuration(
@@ -88,15 +90,15 @@ export default class AnalysisService {
     const daysCount = Math.ceil(firstSubmissionDuration.asDays());
 
     // Calculating past Month, Week, Day Accepted Submissions
-    const pastMonth = acceptedSubmissions.filter(submission => {
+    const pastMonth = acceptedSubmissions.filter((submission) => {
       const duration = secondsToDuration(submission.creationTimeSeconds);
       return duration.asMonths() <= 1;
     }).length;
-    const pastWeek = acceptedSubmissions.filter(submission => {
+    const pastWeek = acceptedSubmissions.filter((submission) => {
       const duration = secondsToDuration(submission.creationTimeSeconds);
       return duration.asWeeks() <= 1;
     }).length;
-    const pastDay = acceptedSubmissions.filter(submission => {
+    const pastDay = acceptedSubmissions.filter((submission) => {
       const duration = secondsToDuration(submission.creationTimeSeconds);
       return duration.asDays() <= 1;
     }).length;
@@ -109,7 +111,7 @@ export default class AnalysisService {
       dailyAverage: Math.round((acceptedSubmissions.length / daysCount) * 10) / 10,
       pastMonth,
       pastWeek,
-      pastDay
+      pastDay,
     };
   }
 
@@ -123,7 +125,7 @@ export default class AnalysisService {
     for (const contest of contests) {
       const standings = await this.cfService.getContestStandings(contest._id, codeforcesHandle);
       let submissions = await this.cfService.getContestSubmissions(contest._id, codeforcesHandle);
-      submissions = submissions.filter(submission => submission.verdict === Verdict.OK);
+      submissions = submissions.filter((submission) => submission.verdict === Verdict.OK);
       submissions = _.uniqBy(submissions, 'problem.name');
       contestsAnalysis.push({
         contestName: contest.name,
@@ -133,7 +135,7 @@ export default class AnalysisService {
             : 0
           : 'Failed to get the rank',
         solvedCount: submissions.length,
-        solvedProblems: submissions.map(submission => submission.problem.index).sort()
+        solvedProblems: submissions.map((submission) => submission.problem.index).sort(),
       });
     }
     return contestsAnalysis;
