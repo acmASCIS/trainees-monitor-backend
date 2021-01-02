@@ -1,11 +1,11 @@
 export enum Role {
   Trainee,
   Mentor,
-  Admin
+  Admin,
 }
 
 enum OnlineJudge {
-  codeforces = 'codeforces'
+  codeforces = 'codeforces',
 }
 export type OnlineJudgesHandles = { [judge in OnlineJudge]: string };
 
