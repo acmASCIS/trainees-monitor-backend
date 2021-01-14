@@ -9,6 +9,9 @@
   "include": [
     "src/**/*"
   ],
+  "ts-node": {
+    "files": true
+  },
   "files": [
     "src/types/auth.d.ts",
     "src/types/CodeforcesService.d.ts"
