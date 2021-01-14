@@ -12,7 +12,7 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true }, (error) => {
     return;
   }
 
-  console.log('Connected successfuly to MongoDB');
+  console.log('Connected successfully to MongoDB');
 });
 
 export const app = server.start();
