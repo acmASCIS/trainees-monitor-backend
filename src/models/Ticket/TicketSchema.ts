@@ -1,7 +1,6 @@
 import { TicketDTO } from './TicketDTO';
 import { date } from 'joi';
 import { Schema, Model, model, Document } from 'mongoose';
-// import { UserDTO } from './UserDTO';
 
 export type TicketType = TicketDTO & Document;
 
@@ -26,7 +25,5 @@ const ticketSchema = new Schema(
   },
   { timestamps: true }
 );
-
-// userSchema.index({ handle: 'text', name: 'text', email: 'text' });
 
 export const TicketModel: Model<TicketType> = model<TicketType>('Ticket', ticketSchema);
