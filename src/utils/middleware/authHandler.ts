@@ -13,7 +13,7 @@ import { Role } from '../../models/User/UserDTO';
  * @param {Role} role - The minimum role allowed
  */
 export const authorize = (role: Role) => (req: Request, res: Response, next: NextFunction) => {
-  const token = req.header('Authorization');
+  let token = req.header('Authorization');
   if (!token) {
     throw new ApiError('Unauthenticated Access.', 401);
   }
