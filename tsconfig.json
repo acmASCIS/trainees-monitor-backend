@@ -9,7 +9,8 @@
     
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "tests/**/*"
   ],
   "files": [
     "src/types/auth.d.ts",

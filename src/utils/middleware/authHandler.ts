@@ -10,6 +10,7 @@ import { Role } from '../../models/User/UserDTO';
  * A higher order function, takes the minimum role allowed as a parameter,
  * checks for the Authorization token, checks for the role, and calls next
  * if the requirements match.
+ *
  * @param {Role} role - The minimum role allowed
  */
 export const authorize = (role: Role) => (req: Request, res: Response, next: NextFunction) => {

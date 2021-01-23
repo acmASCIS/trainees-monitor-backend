@@ -81,7 +81,9 @@ export default class ProfilesController implements IController {
     if (currentUser.following.indexOf(followingUser._id as string) === -1) {
       currentUser.following.push(followingUser._id as string);
     }
-    this.userRepository.update(currentUser._id as string, currentUser);
+
+    await this.userRepository.update(currentUser._id as string, currentUser);
+
     res.json({ success: true });
   }
 
@@ -105,7 +107,8 @@ export default class ProfilesController implements IController {
       currentUser.following.splice(index, 1);
     }
 
-    this.userRepository.update(currentUser._id as string, currentUser);
+    await this.userRepository.update(currentUser._id as string, currentUser);
+
     res.json({ success: true });
   }
 
@@ -116,9 +119,9 @@ export default class ProfilesController implements IController {
    */
   private async following(req: Request, res: Response) {
     const followingUsers = await this.userRepository.findFollowing(req.user._id);
-    const followingFiltered = followingUsers.map((user) => {
-      return _.pick(user, ['handle', 'name', 'email', 'role', 'onlineJudgesHandles']);
-    });
+    const followingFiltered = followingUsers.map((user) =>
+      _.pick(user, ['handle', 'name', 'email', 'role', 'onlineJudgesHandles'])
+    );
     followingFiltered.forEach((user: any) => (user.isFollowed = true));
 
     res.send(followingFiltered);

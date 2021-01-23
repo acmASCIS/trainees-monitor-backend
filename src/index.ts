@@ -15,8 +15,7 @@ mongoose.connect(
       return;
     }
 
-    console.log('Connected successfuly to MongoDB');
-  }
-);
 
+  console.log('Connected successfully to MongoDB');
+});
 export const app = server.start();

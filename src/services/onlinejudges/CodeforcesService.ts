@@ -68,7 +68,7 @@ export class CodeforcesService {
   public async getContestStandings(
     contestId: string,
     handle?: string,
-    showUnofficial: boolean = true
+    showUnofficial = true
   ): Promise<any> {
     const url = this.generateMethodUrl('contest.standings', {
       contestId,
@@ -150,7 +150,7 @@ export class CodeforcesService {
    */
   private toParamsString(params: any): string {
     return Object.keys(params)
-      .map((key) => `${key}=${params[key]}`)
+      .map((key) => `${key}=${params[key] as string}`)
       .join('&');
   }
 }

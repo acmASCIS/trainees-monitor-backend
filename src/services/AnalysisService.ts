@@ -24,7 +24,7 @@ export default class AnalysisService {
     };
   }
 
-  public analysePastRounds(ratingChanges: Codeforces.RatingChange[], limit: number = 5) {
+  public analysePastRounds(ratingChanges: Codeforces.RatingChange[], limit = 5) {
     let averageRank = 0;
     let averageRatingChange = 0;
     const summary = ratingChanges
